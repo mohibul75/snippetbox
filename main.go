@@ -6,6 +6,14 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request){
+
+
+	// Check the url match withes exactly "/"  or not
+	if r.URL.Path != "/"{
+		http.NotFound(w,r)
+		return
+	}
+
 	w.Write([]byte("Hello from snippetbox"))
 }
 
