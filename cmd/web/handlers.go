@@ -11,28 +11,29 @@ import (
 func home(w http.ResponseWriter, r *http.Request){
 
 
-	// Check the url match withes exactly "/"  or not
-	if r.URL.Path != "/"{
-		http.NotFound(w,r)
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
 		return
 	}
 
-	ts,err := template.ParseFiles("./ui/html/pages/home.tmpl")
+	files := []string{
+		"./ui/html/base.tmpl",
+		"./ui/html/pages/home.tmpl",
+	}
 
-	if err != nil{
+	ts, err := template.ParseFiles(files...)
+
+	if err != nil {
 		log.Println(err.Error())
-		http.Error(w,"Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	err = ts.Execute(w, nil)
-
-	if err!=nil {
+	err = ts.ExecuteTemplate(w, "base", nil)
+	if err != nil {
 		log.Println(err.Error())
-		http.Error(w,"Internal Server Error", http.StatusInternalServerError)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-
-	// w.Write([]byte("Hello from snippetbox"))
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request){
