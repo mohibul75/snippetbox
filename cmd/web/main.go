@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"flag"
+	"os"
 )
 
 type neuteredFileSystem struct{
@@ -18,6 +19,9 @@ func main() {
 
 	mux := http.NewServeMux()
 
+	infoLog := log.New(os.Stdout,"INFO\t",log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t",log.Ldate|log.Ltime|log.Lshortfile)
+
 
 	fileServer:= http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
 	mux.Handle("/static",http.NotFoundHandler())
@@ -27,9 +31,11 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCrete)
 
-	log.Println("Starting Server on ", *addr)
+	//log.Println("Starting Server on ", *addr)
+
+	infoLog.Printf("Starting Server on  %s", *addr)
 	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	errorLog.Fatal(err)
 }
 
 func (nfs neuteredFileSystem) Open(path string)(http.File, error){
