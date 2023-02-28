@@ -12,6 +12,11 @@ type neuteredFileSystem struct{
 	fs http.FileSystem
 }
 
+type application struct{
+	errorLog *log.Logger
+	infoLog  *log.Logger
+}
+
 func main() {
 
 	addr:= flag.String("addr",":4000","HTTP network address")
@@ -21,6 +26,22 @@ func main() {
 
 	infoLog := log.New(os.Stdout,"INFO\t",log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t",log.Ldate|log.Ltime|log.Lshortfile)
+
+
+	// but in production and staging, It's reffered to redirect logs in a file
+	// to do that in programatically, you can follow the below code
+	/* 
+		f, err:= os.OpenFile("/info.log", os.0_RDWR|os._CREATE, 0666)
+		if err !=nil{
+			log.Fatal(err)
+		}
+
+		defer f.Close()
+
+		infoLog := log.New(f, "INFO\t", log.Ldate|log.Ltime)
+	
+	*/
+
 
 
 	fileServer:= http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
