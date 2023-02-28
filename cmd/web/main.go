@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"flag"
 	"os"
+	"github.com/go-sql-driver/mysql"
 )
 
 type neuteredFileSystem struct{
@@ -20,6 +21,8 @@ type application struct{
 func main() {
 
 	addr:= flag.String("addr",":4000","HTTP network address")
+	dsn := flag.String("dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
+
 	flag.Parse()
 
 	mux := http.NewServeMux()
@@ -31,6 +34,11 @@ func main() {
 	app:= &application{
 		errorLog: errorLog,
 		infoLog: infoLog,
+	}
+
+	db, err:= openDB(*dsn)
+	if err!=nil {
+
 	}
 
 
