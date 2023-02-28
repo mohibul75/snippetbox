@@ -28,6 +28,12 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t",log.Ldate|log.Ltime|log.Lshortfile)
 
 
+	app:= &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
+	}
+
+
 	// but in production and staging, It's reffered to redirect logs in a file
 	// to do that in programatically, you can follow the below code
 	/* 
@@ -48,9 +54,9 @@ func main() {
 	mux.Handle("/static",http.NotFoundHandler())
 	mux.Handle("/static/", http.StripPrefix("/static",fileServer))
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet/view", snippetView)
-	mux.HandleFunc("/snippet/create", snippetCrete)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet/view", app.snippetView)
+	mux.HandleFunc("/snippet/create", app.snippetCrete)
 
 	srv:= &http.Server{
 		Addr: *addr,
