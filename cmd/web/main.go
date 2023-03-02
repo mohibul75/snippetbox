@@ -1,12 +1,14 @@
 package main
 
 import (
+	"database/sql"
+	"flag"
 	"log"
 	"net/http"
-	"path/filepath"
-	"flag"
 	"os"
-	"github.com/go-sql-driver/mysql"
+	"path/filepath"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type neuteredFileSystem struct{
@@ -38,8 +40,11 @@ func main() {
 
 	db, err:= openDB(*dsn)
 	if err!=nil {
-
+		errorLog.Fatal(err)
 	}
+
+	defer db.Close()
+
 
 
 	// but in production and staging, It's reffered to redirect logs in a file
@@ -75,8 +80,22 @@ func main() {
 	//log.Println("Starting Server on ", *addr)
 
 	infoLog.Printf("Starting Server on  %s", *addr)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	errorLog.Fatal(err)
+}
+
+func openDB(dsn string)(*sql.DB, error){
+	db, err:= sql.Open("mysql",dsn)
+
+	if err!=nil {
+		return nil,err
+	}
+
+	if err=db.Ping(); err!=nil{
+		return nil, err
+	}
+
+	return db, nil
 }
 
 func (nfs neuteredFileSystem) Open(path string)(http.File, error){
