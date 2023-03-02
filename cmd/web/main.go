@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
+	"github.com/mohibul75/snippetbox-go-project/internal/models"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -18,6 +18,7 @@ type neuteredFileSystem struct{
 type application struct{
 	errorLog *log.Logger
 	infoLog  *log.Logger
+	snippet *models.SnippetModel
 }
 
 func main() {
@@ -33,10 +34,7 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t",log.Ldate|log.Ltime|log.Lshortfile)
 
 
-	app:= &application{
-		errorLog: errorLog,
-		infoLog: infoLog,
-	}
+
 
 	db, err:= openDB(*dsn)
 	if err!=nil {
@@ -44,6 +42,13 @@ func main() {
 	}
 
 	defer db.Close()
+
+
+	app:= &application{
+		errorLog: errorLog,
+		infoLog: infoLog,
+		snippet: &models.SnippetModel{DB:db},
+	}
 
 
 
