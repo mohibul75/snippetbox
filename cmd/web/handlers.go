@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"errors"
+	"github.com/mohibul75/snippetbox-go-project/internal/models"
 )
 
 func (app *application)home(w http.ResponseWriter, r *http.Request){
@@ -45,9 +47,20 @@ func (app *application)snippetView(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+	snippet, err:= app.snippet.Get(id)
+
+	if err!=nil{
+		if errors.Is(err, models.ErrNoRecord){
+			app.notFound(w)
+		}else {
+			app.serverError(w,err)
+		}
+		return
+	}
+
 	// w.Write([]byte("Display a specific snippet..."))
 
-	fmt.Fprintf(w, "Display a specific snippet...%d", id)
+	fmt.Fprintf(w, "%+v", snippet)
 }
 
 func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
