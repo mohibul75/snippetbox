@@ -22,7 +22,7 @@ func newTemplateCache()(map[string]*template.Template, error){
 		return nil, err
 	}
 
-	for _, page =range pages {
+	for _, page := range pages {
 
 		name:= filepath.Base(page)
 
@@ -31,15 +31,14 @@ func newTemplateCache()(map[string]*template.Template, error){
 			"./ui/html/partials/nav.tmpl",
 			page,
 		}
-	}
-
+	
 	ts, err:= template.ParseFiles(files...)
 	if err!=nil{
 		return nil,err
 	}
 
 	cache[name]=ts
-	
-	return cache, nil
 
+  }
+	return cache, nil
 }
