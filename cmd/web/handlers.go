@@ -16,10 +16,17 @@ func (app *application)home(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+	snippets, err:= app.snippets.Latest()
+	if err!=nil{
+		app.serverError(w,err)
+		return
+	}
+
 	files := []string{
 		"./ui/html/base.tmpl",
+		"./ui/html/pages/home.tmpl",
 		"./ui/html/partials/nav.tmpl",
-		"./ui/html/pages/view.tmpl",
+		
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -30,7 +37,14 @@ func (app *application)home(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	
+
+	data:= &templateData{
+		Snippets: snippets,
+	}
+
+
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.infoLog.Println(err.Error())
 		app.serverError(w, err)
@@ -46,7 +60,7 @@ func (app *application)snippetView(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	snippet, err:= app.snippet.Get(id)
+	snippet, err:= app.snippets.Get(id)
 
 	if err!=nil{
 		if errors.Is(err, models.ErrNoRecord){
@@ -57,7 +71,28 @@ func (app *application)snippetView(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fmt.Fprintf(w, "%+v", snippet)
+	files:=[]string{
+		"./ui/html/base.tmpl",
+		"./ui/html/pages/view.tmpl",
+		"./ui/html/partials/nav.tmpl",
+	}
+
+	ts, err:= template.ParseFiles(files...)
+
+	if err!=nil{
+		app.serverError(w,err)
+		return
+	}
+
+	data:= &templateData{
+		Snippet: snippet,
+	}
+
+	err= ts.ExecuteTemplate(w,"base",data)
+
+	if err!=nil{
+		app.serverError(w,err)
+	}
 }
 
 func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
@@ -73,7 +108,7 @@ func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
 	content:= "0 Snail\nClimb Mount,\nBut Slow"
 	expires:=7
 
-	id, err:= app.snippet.Insert(title,content,expires)
+	id, err:= app.snippets.Insert(title,content,expires)
 	if err!=nil{
 		app.serverError(w,err)
 		return
