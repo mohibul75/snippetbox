@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"github.com/mohibul75/snippetbox-go-project/internal/models"
+
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/mohibul75/snippetbox-go-project/internal/models"
 )
 
 type neuteredFileSystem struct{
@@ -18,7 +19,7 @@ type neuteredFileSystem struct{
 type application struct{
 	errorLog *log.Logger
 	infoLog  *log.Logger
-	snippet *models.SnippetModel
+	snippet  *models.SnippetModel
 }
 
 func main() {
@@ -33,12 +34,12 @@ func main() {
 	infoLog := log.New(os.Stdout,"INFO\t",log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t",log.Ldate|log.Ltime|log.Lshortfile)
 
-
-
-
 	db, err:= openDB(*dsn)
+
 	if err!=nil {
 		errorLog.Fatal(err)
+	}else{
+		infoLog.Printf("DB conection established!!!")
 	}
 
 	defer db.Close()
@@ -49,8 +50,6 @@ func main() {
 		infoLog: infoLog,
 		snippet: &models.SnippetModel{DB:db},
 	}
-
-
 
 	// but in production and staging, It's reffered to redirect logs in a file
 	// to do that in programatically, you can follow the below code
@@ -65,8 +64,6 @@ func main() {
 		infoLog := log.New(f, "INFO\t", log.Ldate|log.Ltime)
 	
 	*/
-
-
 
 	fileServer:= http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
 	mux.Handle("/static",http.NotFoundHandler())
