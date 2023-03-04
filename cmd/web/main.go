@@ -94,5 +94,3 @@ func (nfs neuteredFileSystem) Open(path string)(http.File, error){
 	}
 	return f,nil
 }
-
-

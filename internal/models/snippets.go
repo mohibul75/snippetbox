@@ -42,7 +42,8 @@ func (m *SnippetModel) Insert(title string, content string, expires int)(int, er
 func (m *SnippetModel) Get(id int)(*Snippet,error){
 
 	s:= &Snippet{}
-	stmt:= `SELCET id,title,content,created,expires FROM snippets WHERE expires > UTC_TIMESTAMP() AND id=?`
+	stmt:= `SELECT id, title, content, created, expires FROM snippets WHERE expires > UTC_TIMESTAMP() AND id = ?`
+	
 
 	err:= m.DB.QueryRow(stmt,id).Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 
