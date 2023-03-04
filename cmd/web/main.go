@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mohibul75/snippetbox-go-project/internal/models"
 )
@@ -51,21 +50,7 @@ func main() {
 		snippet: &models.SnippetModel{DB:db},
 	}
 
-	// but in production and staging, It's reffered to redirect logs in a file
-	// to do that in programatically, you can follow the below code
-	/* 
-		f, err:= os.OpenFile("/info.log", os.0_RDWR|os._CREATE, 0666)
-		if err !=nil{
-			log.Fatal(err)
-		}
-
-		defer f.Close()
-
-		infoLog := log.New(f, "INFO\t", log.Ldate|log.Ltime)
-	
-	*/
-
-	fileServer:= http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
+    fileServer:= http.FileServer(neuteredFileSystem{http.Dir("./ui/static/")})
 	mux.Handle("/static",http.NotFoundHandler())
 	mux.Handle("/static/", http.StripPrefix("/static",fileServer))
 
@@ -78,8 +63,6 @@ func main() {
 		ErrorLog: errorLog,
 		Handler: mux,
 	}
-
-	//log.Println("Starting Server on ", *addr)
 
 	infoLog.Printf("Starting Server on  %s", *addr)
 	err = srv.ListenAndServe()
@@ -96,7 +79,6 @@ func openDB(dsn string)(*sql.DB, error){
 	if err=db.Ping(); err!=nil{
 		return nil, err
 	}
-
 	return db, nil
 }
 
@@ -116,13 +98,10 @@ func (nfs neuteredFileSystem) Open(path string)(http.File, error){
 			closeErr:= f.Close()
 			if closeErr != nil {
 				return nil, closeErr
-			
 			}
-
 			return nil, err
 		}
 	}
-
 	return f,nil
 }
 
