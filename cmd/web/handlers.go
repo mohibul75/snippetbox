@@ -11,7 +11,6 @@ import (
 
 func (app *application)home(w http.ResponseWriter, r *http.Request){
 
-
 	if r.URL.Path != "/" {
 		app.notFound(w)
 		return
@@ -59,8 +58,6 @@ func (app *application)snippetView(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	// w.Write([]byte("Display a specific snippet..."))
-
 	fmt.Fprintf(w, "%+v", snippet)
 }
 
@@ -68,16 +65,10 @@ func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
 
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow","POST")
+		app.clientError(w,http.StatusMethodNotAllowed)
 
-		// w.WriteHeader(405)
-		//  w.Write([]byte("Method Not Allowed"))
-		// replacing above two commented lines with the below one
-
-		http.Error(w,"Method Not Allowed",http.StatusMethodNotAllowed)
 		return
 	}
-
-	//create one new entry
 
 	title:="0 snail"
 	content:= "0 Snail\nClimb Mount,\nBut Slow"
@@ -85,12 +76,9 @@ func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
 
 	id, err:= app.snippet.Insert(title,content,expires)
 	if err!=nil{
-		//app.serverError(w,err)
-
+		app.serverError(w,err)
 		return
 	}
-
-	// w.Write([]byte("Create a new snippet..."))
 
 	http.Redirect(w,r,fmt.Sprintf("/snippet/view?id=%d",id),http.StatusSeeOther)
 }
