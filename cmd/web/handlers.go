@@ -55,7 +55,7 @@ func (app *application)snippetView(w http.ResponseWriter, r *http.Request){
 
 }
 
-func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
+func (app *application) snippetCretePost(w http.ResponseWriter, r *http.Request){
 
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow","POST")
@@ -75,4 +75,9 @@ func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
 	}
 
 	http.Redirect(w,r,fmt.Sprintf("/snippet/view?id=%d",id),http.StatusSeeOther)
+}
+
+func (app *application)snippetCrete(w http.ResponseWriter, r *http.Request){
+
+	w.Write([]byte("Display form for creating snippet"))
 }
