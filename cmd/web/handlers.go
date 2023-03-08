@@ -21,9 +21,8 @@ func (app *application)home(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	data:= &templateData{
-		Snippets: snippets,
-	}
+	data:= app.newTemplateData(r)
+	data.Snippets=snippets
 
 	app.render(w, http.StatusOK, "home.tmpl",data)
 
