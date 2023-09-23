@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mohibul75/snippetbox/internal/models"
 	"html/template"
@@ -32,7 +33,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"./ui/html/base.tmpl",
 		"./ui/html/partials/nav.tmpl",
-		"./ui/html/pages/home.tmpl",
+		//"./ui/html/pages/home.tmpl",
+		"./ui/html/pages/view.tmpl",
 	}
 
 	ts, err := template.ParseFiles(files...)
@@ -58,8 +60,17 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		app.NoFound(w)
 		return
 	}
+	snippet, err := app.snippets.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.NoFound(w)
+		} else {
+			app.ServerError(w, err)
+		}
+		return
+	}
 
-	fmt.Fprintf(w, "Snnipet showing for id : %d", id)
+	fmt.Fprintf(w, "%+v", snippet)
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
