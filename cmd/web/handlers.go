@@ -77,5 +77,6 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.ServerError(w, err)
 	}
-	w.Write([]byte("Create a new snippet %d"))
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
 }
