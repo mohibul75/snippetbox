@@ -1,0 +1,5 @@
+git.sh
+go.sum
+mysql-data/*
+mysql-data
+.env
