@@ -24,7 +24,7 @@ func NewApplication(ilog *log.Logger, elog *log.Logger, content *models.SnippetM
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
+	if r.URL.Path != "/" {
 		app.NoFound(w)
 		return
 	}

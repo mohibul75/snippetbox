@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 	"github.com/mohibul75/snippetbox/internal/models"
 	"log"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+	err := godotenv.Load(".env")
+
 	addr := os.Getenv("ADDRESS")
 	dsn := os.Getenv("DB_URL")
 
@@ -36,7 +39,7 @@ func main() {
 		Handler:  app.routes(),
 	}
 
-	infoLog.Println("Server starting at 5000")
+	infoLog.Printf("Server starting at %s", addr)
 	err = server.ListenAndServe()
 	errorLog.Fatal(err)
 }
