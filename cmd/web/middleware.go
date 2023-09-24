@@ -21,3 +21,12 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func (app *application) panicRecover(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			
+		}()
+		next.ServeHTTP(w, r)
+	})
+}
