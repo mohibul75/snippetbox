@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/julienschmidt/httprouter"
 	"github.com/mohibul75/snippetbox/internal/models"
 	"html/template"
 	"log"
@@ -25,10 +26,6 @@ func NewApplication(ilog *log.Logger, elog *log.Logger, content *models.SnippetM
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.NoFound(w)
-		return
-	}
 
 	files := []string{
 		"./ui/html/base.tmpl",
@@ -54,8 +51,8 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
-
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	params := httprouter.ParamsFromContext(r.Context())
+	id, err := strconv.Atoi(params.ByName("id"))
 	if err != nil || id < 1 {
 		app.NoFound(w)
 		return
@@ -74,11 +71,6 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("allow", "POST")
-		app.ClientError(w, http.StatusMethodNotAllowed)
-		return
-	}
 
 	title := "O snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
